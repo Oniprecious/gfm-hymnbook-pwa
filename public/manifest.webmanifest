@@ -1,0 +1,26 @@
+{
+  "id": "/gfm-hymnbook-pwa/",
+  "name": "G.F.M Hymn Book",
+  "short_name": "G.F.M Hymns",
+  "description": "English and Yoruba hymns for worship, installable and available offline after the first complete load.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "/gfm-hymnbook-pwa/",
+  "scope": "/gfm-hymnbook-pwa/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#f5f7fa",
+  "theme_color": "#1e88e5",
+  "categories": ["books", "education", "lifestyle"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "English hymns", "short_name": "English", "url": "/gfm-hymnbook-pwa/#/catalogue/en" },
+    { "name": "Yoruba hymns", "short_name": "Yoruba", "url": "/gfm-hymnbook-pwa/#/catalogue/yo" },
+    { "name": "Favourites", "short_name": "Favourites", "url": "/gfm-hymnbook-pwa/#/favourites" }
+  ]
+}

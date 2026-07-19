@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "dataVersion": 1,
+  "catalogueSha256": "69ad9ac5b2104c4bc884a8fcbde26f8479f01836e4ef78b9b0047204064644ef",
+  "themesSha256": "3aa9e4caa5d805c08f4b4b50a5303d914563ac58ce837ec1b2e953e7482b46a8",
+  "recordCount": 2096,
+  "languageCounts": {
+    "en": 1048,
+    "yo": 1048
+  },
+  "availabilityCounts": {
+    "AVAILABLE": 1898,
+    "NEEDS_REVIEW": 184,
+    "MISSING_TEXT": 14
+  },
+  "themeCount": 36,
+  "yorubaUnicodeRecords": 20
+}
