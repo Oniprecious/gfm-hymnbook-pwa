@@ -108,7 +108,7 @@ svg { width: 1.4rem; height: 1.4rem; stroke-width: 2; }
 .home-intro h1 { font: 700 clamp(1.55rem, 6vw, 2.45rem)/1.12 Georgia, "Times New Roman", serif; margin: 10px auto 8px; max-width: 700px; letter-spacing: .015em; }
 .home-intro > p:last-child { color: var(--muted); margin: 0 auto; max-width: 580px; font-size: clamp(.9rem, 3.2vw, 1rem); line-height: 1.4; }
 .language-cards { width: min(100%, 680px); display: grid; gap: 16px; margin: 18px auto 0; }
-.language-card { position: relative; width: min(78vw, 290px, 27dvh); aspect-ratio: 1; justify-self: center; overflow: hidden; border-radius: 26px; display: grid; place-items: center; text-align: center; color: #fff; box-shadow: var(--shadow); background: linear-gradient(135deg,rgba(4,36,64,.76),rgba(21,112,177,.34),rgba(4,32,56,.78)), url('/images/language_card_v2.webp') center/cover; transition: transform .18s ease, box-shadow .18s ease; }
+.language-card { position: relative; width: min(82vw, 310px, 30dvh); aspect-ratio: 1; justify-self: center; overflow: hidden; border-radius: 26px; display: grid; place-items: center; text-align: center; color: #fff; box-shadow: var(--shadow); background: linear-gradient(135deg,rgba(4,36,64,.76),rgba(21,112,177,.34),rgba(4,32,56,.78)), url('/images/language_card_v2.webp') center/cover; transition: transform .18s ease, box-shadow .18s ease; }
 .language-card:hover { transform: translateY(-2px); box-shadow: 0 20px 48px rgba(5,37,63,.25); }
 .language-card span { display: flex; flex-direction: column; gap: 8px; padding: 18px; }
 .language-card strong { max-width: 230px; font-size: clamp(1.35rem, 6.2vw, 1.75rem); line-height: 1.15; letter-spacing: .035em; }
@@ -227,7 +227,7 @@ svg { width: 1.4rem; height: 1.4rem; stroke-width: 2; }
 
 @media (min-width: 720px) {
   .language-cards { grid-template-columns: 1fr 1fr; }
-  .language-card { width: min(100%, 300px); }
+  .language-card { width: min(100%, 310px); }
   .theme-grid { grid-template-columns: 1fr 1fr; }
   .reader-navigation { width: min(760px,calc(100% - 32px)); left: 50%; right: auto; transform: translateX(-50%); border: 1px solid var(--divider); border-bottom: 0; border-radius: 18px 18px 0 0; }
 }
@@ -243,6 +243,10 @@ svg { width: 1.4rem; height: 1.4rem; stroke-width: 2; }
   .reader-quick-actions { right: max(13px,env(safe-area-inset-right)); }
   .reader-action-item { font-size: .76rem; padding-left: 12px; }
   .reader-action-toggle { width: 56px; height: 56px; }
+}
+
+@media (orientation: portrait) and (max-height: 640px) {
+  .language-card { width: min(80vw, 290px, 27dvh); }
 }
 
 @media (orientation: landscape) and (max-height: 560px) {
