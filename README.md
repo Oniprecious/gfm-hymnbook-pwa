@@ -8,7 +8,7 @@ Live application: <https://oniprecious.github.io/gfm-hymnbook-pwa/>
 
 - 2,096 canonical hymn records copied deterministically from the private Android source
 - English and Yoruba number, title and lyric search
-- direct hymn-number opening, with optional browser voice recognition
+- direct hymn-number opening, with offline-first on-device voice recognition where supported
 - 36 worship themes, stable favourites and counterpart switching
 - previous/next buttons, keyboard arrows and horizontal reader swipe
 - light/dark appearance, adjustable text size and line spacing
@@ -89,7 +89,7 @@ The Android application remains in a separate private repository and is not incl
 
 ## Browser limitations
 
-- Speech recognition is progressive enhancement, varies by browser and may require network access.
+- Voice recognition prefers a browser-provided on-device English language pack. The first use may download that pack; browsers without the on-device API, including some Safari versions, still require network access.
 - iOS controls install prompts, background updates and storage eviction.
 - Export favourites/settings periodically if they are important.
 - Audio is excluded until an authoritative hymn-to-tune mapping and redistribution licence are supplied.

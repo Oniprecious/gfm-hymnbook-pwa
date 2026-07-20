@@ -8,7 +8,7 @@ import { LoadingState } from '../components/LoadingState'
 import { ScreenHeader } from '../components/ScreenHeader'
 import { useCatalogue } from '../hooks/useCatalogue'
 import { parseDirectNumber, queryHymns } from '../lib/catalogue'
-import { parseVoiceNumber, speechRecognitionConstructor, type SpeechRecognitionLike } from '../lib/voice'
+import { enableOnDeviceRecognition, parseVoiceNumber, speechRecognitionConstructor, type SpeechRecognitionLike } from '../lib/voice'
 import { useAppState } from '../state/AppStateContext'
 import type { Language } from '../types'
 
@@ -23,6 +23,7 @@ export function CataloguePage({ favouritesOnly = false }: { favouritesOnly?: boo
   const [query, setQuery] = useState('')
   const [numberInput, setNumberInput] = useState('')
   const [listening, setListening] = useState(false)
+  const [voiceMode, setVoiceMode] = useState<'idle' | 'preparing' | 'offline' | 'online'>('idle')
   const recognition = useRef<SpeechRecognitionLike | null>(null)
   const voiceAvailable = typeof window !== 'undefined' && Boolean(speechRecognitionConstructor())
   const language = favouritesOnly ? undefined : routeLanguage
@@ -49,13 +50,14 @@ export function CataloguePage({ favouritesOnly = false }: { favouritesOnly?: boo
     navigate(`/hymn/${hymn.stableId}?mode=language`)
   }
 
-  const startVoice = () => {
+  const startVoice = async () => {
     const Constructor = speechRecognitionConstructor()
     if (!Constructor) return
     recognition.current?.abort()
     const instance = new Constructor()
     recognition.current = instance
-    instance.lang = (language ?? state.preferredLanguage) === 'yo' ? 'yo-NG' : 'en-NG'
+    const onlineLanguage = (language ?? state.preferredLanguage) === 'yo' ? 'yo-NG' : 'en-NG'
+    instance.lang = onlineLanguage
     instance.continuous = false
     instance.interimResults = false
     instance.maxAlternatives = 5
@@ -77,9 +79,20 @@ export function CataloguePage({ favouritesOnly = false }: { favouritesOnly?: boo
       setListening(false)
       notify('No hymn number was recognised. Type the number instead.')
     }
-    instance.onerror = () => { setListening(false); notify('Voice search is unavailable. Type the hymn number instead.') }
+    instance.onerror = () => { setListening(false); notify(instance.processLocally ? 'Offline voice could not recognise that number. Type it instead.' : 'Voice search is unavailable. Type the hymn number instead.') }
     instance.onend = () => setListening(false)
     setListening(true)
+    setVoiceMode('preparing')
+    const localResult = await enableOnDeviceRecognition(Constructor, instance, 'en-US')
+    if (recognition.current !== instance) return
+    if (localResult === 'available' || localResult === 'installed') {
+      setVoiceMode('offline')
+      if (localResult === 'installed') notify('Offline voice pack installed. Listening now.')
+    } else {
+      instance.lang = onlineLanguage
+      instance.processLocally = false
+      setVoiceMode('online')
+    }
     instance.start()
   }
 
@@ -100,8 +113,8 @@ export function CataloguePage({ favouritesOnly = false }: { favouritesOnly?: boo
             <div className="search-input-wrap"><Search aria-hidden="true" /><input id="catalogue-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={routeLanguage === 'yo' ? 'Search Yoruba hymns' : 'Search English hymns'} autoComplete="off" /></div>
             <form className="number-form" onSubmit={openNumber}>
               <label htmlFor="direct-number">Open hymn by number</label>
-              <div><input id="direct-number" value={numberInput} onChange={(event) => setNumberInput(event.target.value)} inputMode="numeric" pattern="[0-9]*" placeholder="1–1048" /><button className="primary-button" type="submit">Open hymn</button>{voiceAvailable && <IconButton className={listening ? 'is-listening' : ''} aria-label={listening ? 'Listening for hymn number' : 'Speak hymn number'} disabled={listening} onClick={startVoice}><Mic aria-hidden="true" /></IconButton>}</div>
-              {voiceAvailable && <small>Voice recognition requires browser support and may require a network connection.</small>}
+              <div><input id="direct-number" value={numberInput} onChange={(event) => setNumberInput(event.target.value)} inputMode="numeric" pattern="[0-9]*" placeholder="1–1048" /><button className="primary-button" type="submit">Open hymn</button>{voiceAvailable && <IconButton className={listening ? 'is-listening' : ''} aria-label={voiceMode === 'preparing' ? 'Preparing offline voice recognition' : listening ? 'Listening for hymn number' : 'Speak hymn number'} disabled={listening} onClick={startVoice}><Mic aria-hidden="true" /></IconButton>}</div>
+              {voiceAvailable && <small>{voiceMode === 'offline' ? 'Offline voice recognition is active on this device.' : voiceMode === 'preparing' ? 'Checking or downloading the on-device voice pack…' : 'Uses offline voice when the browser supports it; otherwise a connection is required.'}</small>}
             </form>
           </div>
           <div className="list-summary" role="status"><strong>{hymns.length.toLocaleString()}</strong> {hymns.length === 1 ? 'hymn' : 'hymns'}</div>

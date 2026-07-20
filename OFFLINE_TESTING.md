@@ -12,6 +12,8 @@
 8. Browse both catalogues, search by number/title/lyrics, open favourites, read hymns, move Previous/Next and switch languages.
 9. Restore connectivity after testing.
 
+On browsers that support on-device Web Speech, tap **Speak hymn number** once while online to install the English voice pack. After the interface confirms that offline voice is active, repeat the hymn-number command in airplane mode. The voice pack belongs to the browser or operating system and is separate from the PWA service-worker cache. Browsers without this experimental API keep typed-number opening as the offline fallback.
+
 Do not treat a browser’s generic “offline” icon as proof. The application’s own readiness message is shown only after service-worker activation and successful canonical-data validation.
 
 ## Automated verification

@@ -43,15 +43,28 @@ export interface SpeechRecognitionLike extends EventTarget {
   continuous: boolean
   interimResults: boolean
   maxAlternatives: number
+  processLocally?: boolean
   start(): void
   stop(): void
   abort(): void
   onresult: ((event: SpeechRecognitionEventLike) => void) | null
-  onerror: (() => void) | null
+  onerror: ((event: Event & { error?: string }) => void) | null
   onend: (() => void) | null
 }
 
-type SpeechRecognitionConstructor = new () => SpeechRecognitionLike
+export type OnDeviceSpeechAvailability = 'available' | 'downloadable' | 'downloading' | 'unavailable'
+export type OnDeviceSpeechResult = 'available' | 'installed' | 'unavailable' | 'unsupported'
+
+interface OnDeviceSpeechOptions {
+  langs: string[]
+  processLocally: true
+}
+
+export interface SpeechRecognitionConstructor {
+  new (): SpeechRecognitionLike
+  available?: (options: OnDeviceSpeechOptions) => Promise<OnDeviceSpeechAvailability>
+  install?: (options: OnDeviceSpeechOptions) => Promise<boolean>
+}
 
 declare global {
   interface Window {
@@ -62,4 +75,29 @@ declare global {
 
 export function speechRecognitionConstructor(): SpeechRecognitionConstructor | null {
   return window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null
+}
+
+export async function enableOnDeviceRecognition(Constructor: SpeechRecognitionConstructor, instance: SpeechRecognitionLike, language = 'en-US'): Promise<OnDeviceSpeechResult> {
+  if (typeof Constructor.available !== 'function' || !('processLocally' in instance)) return 'unsupported'
+  const options: OnDeviceSpeechOptions = { langs: [language], processLocally: true }
+  try {
+    const status = await Constructor.available(options)
+    if (status === 'available') {
+      instance.lang = language
+      instance.processLocally = true
+      return 'available'
+    }
+    if (status === 'downloadable' || status === 'downloading') {
+      if (typeof Constructor.install !== 'function') return 'unavailable'
+      const installed = await Constructor.install(options)
+      if (installed) {
+        instance.lang = language
+        instance.processLocally = true
+        return 'installed'
+      }
+    }
+    return 'unavailable'
+  } catch {
+    return 'unsupported'
+  }
 }
