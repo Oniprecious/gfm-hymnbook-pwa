@@ -1,5 +1,5 @@
-import { Heart, Home, Languages, Share2 } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { Heart, Home, Languages, Plus, Share2, X } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { PageWidth, useShell } from '../components/AppShell'
 import { IconButton } from '../components/IconButton'
@@ -17,6 +17,7 @@ export function ReaderPage() {
   const { state, setPreferences, isFavourite, toggleFavourite } = useAppState()
   const { notify } = useShell()
   const touchStart = useRef<{ x: number; y: number } | null>(null)
+  const [actionsOpen, setActionsOpen] = useState(false)
   const mode = searchParams.get('mode') ?? 'language'
   const themeId = Number.parseInt(searchParams.get('theme') ?? '0', 10) || 0
   const hymn = catalogue?.byId.get(stableId)
@@ -32,7 +33,10 @@ export function ReaderPage() {
 
   const move = useCallback((offset: number) => {
     const target = sequence[index + offset]
-    if (target) navigate(`/hymn/${target.stableId}${routeSuffix}`)
+    if (target) {
+      setActionsOpen(false)
+      navigate(`/hymn/${target.stableId}${routeSuffix}`)
+    }
   }, [index, navigate, routeSuffix, sequence])
 
   useEffect(() => {
@@ -60,7 +64,12 @@ export function ReaderPage() {
   const counterpart = catalogue.byLanguageAndNumber.get(`${counterpartLanguage}:${hymn.counterpartNumber}`)
   const switchLanguage = () => {
     if (!counterpart || counterpart.availability === 'MISSING_TEXT') { notify('The corresponding hymn text is not yet available.'); return }
+    setActionsOpen(false)
     navigate(`/hymn/${counterpart.stableId}${routeSuffix}`)
+  }
+  const updateFavourite = () => {
+    notify(toggleFavourite(hymn.stableId) ? 'Added to favourites.' : 'Removed from favourites.')
+    setActionsOpen(false)
   }
   const share = async () => {
     const body = hymn.availability === 'MISSING_TEXT' ? 'Hymn text not yet available.' : hymn.lyrics
@@ -93,7 +102,7 @@ export function ReaderPage() {
 
   return (
     <div className="reader-page">
-      <ScreenHeader title={`Hymn ${hymn.hymnNumber}`} back actions={<><IconButton aria-label="Share hymn" onClick={share}><Share2 aria-hidden="true" /></IconButton><IconButton className={favourite ? 'is-favourite' : ''} aria-label={favourite ? 'Remove from favourites' : 'Add to favourites'} onClick={() => notify(toggleFavourite(hymn.stableId) ? 'Added to favourites.' : 'Removed from favourites.')}><Heart aria-hidden="true" fill={favourite ? 'currentColor' : 'none'} /></IconButton></>} />
+      <ScreenHeader title={`Hymn ${hymn.hymnNumber}`} back actions={<><IconButton aria-label="Share hymn" onClick={share}><Share2 aria-hidden="true" /></IconButton><IconButton className={favourite ? 'is-favourite' : ''} aria-label={favourite ? 'Remove from favourites' : 'Add to favourites'} onClick={updateFavourite}><Heart aria-hidden="true" fill={favourite ? 'currentColor' : 'none'} /></IconButton></>} />
       <div className="reader-controls" aria-label="Reading controls">
         <span>READING CONTROLS</span>
         <button type="button" aria-label="Decrease text size" onClick={() => setPreferences({ textSize: Math.max(14, state.textSize - 1) })}>A−</button>
@@ -109,7 +118,15 @@ export function ReaderPage() {
           <div className="lyrics" style={{ fontSize: `${state.textSize}px`, lineHeight: state.lineSpacing }}>{hymn.availability === 'MISSING_TEXT' ? 'Hymn text not yet available.' : hymn.lyrics}</div>
         </PageWidth>
       </main>
-      <div className="reader-quick-actions" aria-label="Hymn actions"><button type="button" onClick={switchLanguage}><Languages aria-hidden="true" /> {counterpartLanguage === 'yo' ? 'Yoruba' : 'English'}</button><Link to="/"><Home aria-hidden="true" /> Home</Link></div>
+      {actionsOpen && <button type="button" className="reader-action-backdrop" aria-label="Close hymn actions" onClick={() => setActionsOpen(false)} />}
+      <div className={`reader-quick-actions${actionsOpen ? ' is-open' : ''}`} aria-label="Hymn actions">
+        {actionsOpen && <div className="reader-action-menu" id="reader-action-menu" role="menu">
+          <button type="button" className="reader-action-item" role="menuitem" onClick={switchLanguage}><span>{counterpartLanguage === 'yo' ? 'Yoruba' : 'English'}</span><Languages aria-hidden="true" /></button>
+          <Link className="reader-action-item" role="menuitem" to="/" onClick={() => setActionsOpen(false)}><span>Home</span><Home aria-hidden="true" /></Link>
+          <button type="button" className={`reader-action-item${favourite ? ' is-favourite' : ''}`} role="menuitem" onClick={updateFavourite}><span>{favourite ? 'Remove favourite' : 'Add favourite'}</span><Heart aria-hidden="true" fill={favourite ? 'currentColor' : 'none'} /></button>
+        </div>}
+        <button type="button" className="reader-action-toggle" aria-label={actionsOpen ? 'Collapse hymn actions' : 'Open hymn actions'} aria-controls="reader-action-menu" aria-expanded={actionsOpen} onClick={() => setActionsOpen((open) => !open)}>{actionsOpen ? <X aria-hidden="true" /> : <Plus aria-hidden="true" />}</button>
+      </div>
       <nav className="reader-navigation" aria-label="Hymn navigation"><button type="button" disabled={index <= 0} onClick={() => move(-1)}>Previous</button><button type="button" disabled={index < 0 || index >= sequence.length - 1} onClick={() => move(1)}>Next</button></nav>
     </div>
   )

@@ -186,9 +186,17 @@ svg { width: 1.4rem; height: 1.4rem; stroke-width: 2; }
 .reader-navigation { position: fixed; z-index: 25; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 9px max(12px,env(safe-area-inset-right)) calc(9px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left)); border-top: 1px solid var(--divider); background: color-mix(in srgb,var(--card) 96%,transparent); backdrop-filter: blur(16px); }
 .reader-navigation button { min-height: 50px; border: 1px solid var(--divider); border-radius: 14px; background: var(--card); color: var(--primary); font-weight: 800; cursor: pointer; }
 .reader-navigation button:disabled { color: var(--muted); opacity: .45; }
-.reader-quick-actions { position: fixed; z-index: 26; right: max(16px,env(safe-area-inset-right)); bottom: calc(76px + env(safe-area-inset-bottom)); display: flex; gap: 8px; }
-.reader-quick-actions button, .reader-quick-actions a { min-height: 46px; display: flex; align-items: center; gap: 7px; padding: 10px 13px; border: 1px solid var(--divider); border-radius: 999px; background: var(--card); color: var(--primary); font-weight: 700; box-shadow: 0 7px 22px rgba(12,43,70,.12); cursor: pointer; }
-.reader-quick-actions svg { width: 1.1rem; height: 1.1rem; }
+.reader-action-backdrop { position: fixed; inset: 0; z-index: 26; border: 0; background: rgba(5,24,39,.18); backdrop-filter: blur(1px); cursor: default; }
+.reader-quick-actions { position: fixed; z-index: 27; right: max(18px,env(safe-area-inset-right)); bottom: calc(78px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+.reader-action-menu { display: flex; flex-direction: column; align-items: flex-end; gap: 9px; animation: reader-actions-in .18s ease-out; }
+.reader-action-item { min-height: 48px; display: flex; align-items: center; gap: 11px; padding: 8px 10px 8px 16px; border: 1px solid color-mix(in srgb,var(--primary) 24%,var(--divider)); border-radius: 999px; background: var(--card); color: var(--primary); font-weight: 750; box-shadow: 0 9px 28px rgba(12,43,70,.18); cursor: pointer; }
+.reader-action-item span { white-space: nowrap; }
+.reader-action-item svg { width: 34px; height: 34px; padding: 7px; border-radius: 50%; background: color-mix(in srgb,var(--primary) 10%,var(--card)); }
+.reader-action-item.is-favourite { color: #b86b00; }
+.reader-action-toggle { width: 60px; height: 60px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--gold); color: #102b42; box-shadow: 0 12px 30px rgba(77,51,5,.3); cursor: pointer; transition: transform .18s ease, box-shadow .18s ease; }
+.reader-action-toggle:hover { transform: translateY(-2px); box-shadow: 0 15px 34px rgba(77,51,5,.35); }
+.reader-action-toggle svg { width: 28px; height: 28px; stroke-width: 2.4; }
+@keyframes reader-actions-in { from { opacity: 0; transform: translateY(12px) scale(.97); } }
 
 .about-width { max-width: 760px; }
 .about-identity { text-align: center; }
@@ -233,7 +241,9 @@ svg { width: 1.4rem; height: 1.4rem; stroke-width: 2; }
   .number-form .icon-button { grid-column: 1/-1; width: 100%; border-radius: 14px; }
   .reader-controls { padding-left: 9px; }
   .reader-controls span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
-  .reader-quick-actions button, .reader-quick-actions a { font-size: .76rem; padding-inline: 10px; }
+  .reader-quick-actions { right: max(13px,env(safe-area-inset-right)); }
+  .reader-action-item { font-size: .76rem; padding-left: 12px; }
+  .reader-action-toggle { width: 56px; height: 56px; }
 }
 
 @media (orientation: landscape) and (max-height: 560px) {
@@ -248,7 +258,7 @@ svg { width: 1.4rem; height: 1.4rem; stroke-width: 2; }
 }
 
 @media print {
-  .app-header, .reader-controls, .reader-navigation, .reader-quick-actions, .update-banner, .toast { display: none !important; }
+  .app-header, .reader-controls, .reader-navigation, .reader-action-backdrop, .reader-quick-actions, .update-banner, .toast { display: none !important; }
   .reader-page { padding: 0; }
   .reader-main { padding: 0; }
 }
