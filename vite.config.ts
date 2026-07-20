@@ -23,7 +23,7 @@ export default defineConfig({
         clientsClaim: false,
         skipWaiting: false,
         navigateFallback: 'index.html',
-        globPatterns: ['**/*.{js,css,html,ico,png,webmanifest,json}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,webp,webmanifest,json}'],
       },
     }),
   ],
