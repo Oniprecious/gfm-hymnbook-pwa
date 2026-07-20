@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 
 test.beforeEach(async ({ page }) => {
   await page.goto('./')
-  await expect(page.getByRole('heading', { name: 'A hymn book for every moment of worship' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'GRACIOUS FAMILY HYMN BOOK' })).toBeVisible()
 })
 
 test('loads from the repository subpath with all install metadata and no critical accessibility violations', async ({ page, request }) => {
@@ -59,7 +59,7 @@ test('navigates hymns and switches counterpart without using array positions', a
   await expect(page.getByRole('button', { name: 'Remove from favourites' })).toBeVisible()
   await page.getByRole('button', { name: 'Open hymn actions' }).click()
   await page.getByRole('menuitem', { name: 'Home' }).click()
-  await expect(page.getByRole('heading', { name: 'A hymn book for every moment of worship' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'GRACIOUS FAMILY HYMN BOOK' })).toBeVisible()
 })
 
 test('relaunches and reads both catalogues offline after readiness', async ({ page, context, browserName }) => {
@@ -67,7 +67,7 @@ test('relaunches and reads both catalogues offline after readiness', async ({ pa
   await expect(page.getByText('Ready for offline worship')).toBeVisible({ timeout: 30_000 })
   await context.setOffline(true)
   await page.reload()
-  await expect(page.getByRole('heading', { name: 'A hymn book for every moment of worship' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'GRACIOUS FAMILY HYMN BOOK' })).toBeVisible()
   await page.goto('./#/catalogue/en')
   await page.getByLabel('Search number, title, or lyrics').fill('Jesus you are so good')
   await expect(page.getByRole('link', { name: /Hymn 1,/ })).toBeVisible()

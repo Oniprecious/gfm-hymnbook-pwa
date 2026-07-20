@@ -42,7 +42,6 @@ export function AppShell() {
       {showSplash && (
         <div className="splash" role="status" aria-label="Opening G.F.M Hymn Book">
           <img src={`${import.meta.env.BASE_URL}images/splash_brand.png`} alt="G.F.M emblem and worship artwork" />
-          <h1>G.F.M Hymn Book</h1>
           <p>WORSHIP · WORD · FELLOWSHIP</p>
           <small>2,096 English &amp; Yoruba hymn records</small>
         </div>

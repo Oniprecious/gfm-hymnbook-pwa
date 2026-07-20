@@ -21,7 +21,7 @@ export function HomePage() {
         <PageWidth>
           <section className="home-intro">
             <p className="eyebrow">GRACIOUS FIRE MINISTRY INT’L</p>
-            <h1>A hymn book for every moment of worship</h1>
+            <h1>GRACIOUS FAMILY HYMN BOOK</h1>
             <p>Choose a language to browse all 1,048 numbered hymns.</p>
           </section>
           <div className="language-cards">
